@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'spec'
 require 'geo_ruby'
-gem 'activerecord', '=2.3.5'
-#gem 'activerecord', '=3.0.0.beta3'
+#gem 'activerecord', '=2.3.5'
+gem 'activerecord', '=3.0.0.beta3'
 require 'active_record'
 
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
@@ -30,6 +30,26 @@ def mysql_connection
     :host => 'localhost'
   )
   
+  # Don't output migration logging
+  ActiveRecord::Migration.verbose = false
+end
+
+def spatialite_connection
+  ActiveRecord::Base.establish_connection(
+    :adapter => 'sqlite3',
+    :database  => ':memory:'
+  )
+  
+  # Load the libspatialite extension
+  ActiveRecord::Base.connection.raw_connection.enable_load_extension( 1 )
+  ActiveRecord::Base.connection.raw_connection.load_extension("/usr/local/lib/libspatialite.dylib")
+  ActiveRecord::Base.connection.raw_connection.enable_load_extension( 0 )
+  
+  # Initialize spatial metadata
+  File.read(File.dirname(__FILE__) + "/../assets/init_spatialite-2.4.sql").split(';').each do |sql|
+    ActiveRecord::Base.connection.execute(sql) unless sql.blank?
+  end
+
   # Don't output migration logging
   ActiveRecord::Migration.verbose = false
 end
