@@ -37,7 +37,8 @@ end
 def spatialite_connection
   ActiveRecord::Base.establish_connection(
     :adapter => 'sqlite3',
-    :database  => ':memory:'
+    :database => 'spatial_adapter.sqlite3'
+    #:database  => ':memory:'
   )
   
   # Load the libspatialite extension
@@ -45,11 +46,14 @@ def spatialite_connection
   ActiveRecord::Base.connection.raw_connection.load_extension("/usr/local/lib/libspatialite.dylib")
   ActiveRecord::Base.connection.raw_connection.enable_load_extension( 0 )
   
-  # Initialize spatial metadata
-  File.read(File.dirname(__FILE__) + "/../assets/init_spatialite-2.4.sql").split(';').each do |sql|
-    ActiveRecord::Base.connection.execute(sql) unless sql.blank?
-  end
-
+  # Initialize spatial metadata if SPATIAL_REF_SYS and GEOMETRY_COLUMNS tables do not exist
+  #if ( !ActiveRecord::Base.connection.table_exists?('SPATIAL_REF_SYS')  ||
+  #  !ActiveRecord::Base.connection.table_exists?('GEOMETRY_COLUMNS') )
+  #  File.read(File.dirname(__FILE__) + "/../assets/init_spatialite-2.4.sql").split(';').each do |sql|
+  #    ActiveRecord::Base.connection.execute(sql) unless sql.blank?
+  #  end
+  #end
+  
   # Don't output migration logging
   ActiveRecord::Migration.verbose = false
 end

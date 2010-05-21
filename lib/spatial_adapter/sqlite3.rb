@@ -3,9 +3,18 @@ require 'active_record/connection_adapters/sqlite3_adapter'
 
 ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
   include SpatialAdapter
+
+  def spatialite_version
+    #http://www.gaia-gis.it/spatialite/spatialite-sql-2.3.1.html#version
+    execute("select spatialite_version();")[0]["spatialite_version()"]
+  end
   
   def supports_geographic?
-    true
+    begin
+      return true if spatialite_version
+    rescue ActiveRecord::StatementInvalid => e
+      return false if e.message =~ /.*no such function: spatialite_version.*/i
+    end 
   end
   
   alias :original_native_database_types :native_database_types
