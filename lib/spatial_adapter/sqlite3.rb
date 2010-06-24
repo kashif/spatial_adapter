@@ -186,24 +186,25 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
   private
   
   def tables_without_opengis
-    tables - %w{ geometry_columns spatial_ref_sys }
+    tables - %w{ geometry_columns spatial_ref_sys geometry_columns_auth geom_cols_ref_sys }
   end
   
   def column_spatial_info(table_name)
-    constr = select_rows("SELECT * FROM geometry_columns WHERE f_table_name = '#{table_name}'")
+    constr = select_all("SELECT * FROM geometry_columns WHERE f_table_name = '#{table_name}'")
 
     raw_geom_infos = {}
     constr.each do |constr_def_a|
-      raw_geom_infos[constr_def_a[3]] ||= SpatialAdapter::RawGeomInfo.new
-      raw_geom_infos[constr_def_a[3]].type = constr_def_a[6]
-      raw_geom_infos[constr_def_a[3]].dimension = constr_def_a[4].to_i
-      raw_geom_infos[constr_def_a[3]].srid = constr_def_a[5].to_i
+      geometry_column = constr_def_a['f_geometry_column']
+      raw_geom_infos[geometry_column] ||= SpatialAdapter::RawGeomInfo.new
+      raw_geom_infos[geometry_column].type = constr_def_a['type']
+      raw_geom_infos[geometry_column].dimension = constr_def_a['coord_dimension'].to_i
+      raw_geom_infos[geometry_column].srid = constr_def_a['srid'].to_i
 
-      if raw_geom_infos[constr_def_a[3]].type[-1] == ?M
-        raw_geom_infos[constr_def_a[3]].with_m = true
-        raw_geom_infos[constr_def_a[3]].type.chop!
+      if raw_geom_infos[geometry_column].type[-1] == ?M
+        raw_geom_infos[geometry_column].with_m = true
+        raw_geom_infos[geometry_column].type.chop!
       else
-        raw_geom_infos[constr_def_a[3]].with_m = false
+        raw_geom_infos[geometry_column].with_m = false
       end
     end
 
