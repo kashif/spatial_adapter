@@ -1,7 +1,7 @@
 spatialite_connection
 
 ActiveRecord::Schema.define() do
-  execute <<-SQL
+  raw_connection.execute_batch <<-SQL
     drop table if exists point_models;
     create table point_models
     (

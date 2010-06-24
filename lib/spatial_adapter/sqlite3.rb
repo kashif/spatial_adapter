@@ -39,7 +39,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
   end
   
   def supports_geographic?
-    opengis_major_version > 1 || (opengis_major_version == 1 && opengis_minor_version >= 5)
+    false
   end
   
   alias :original_native_database_types :native_database_types

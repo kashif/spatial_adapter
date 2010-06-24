@@ -60,16 +60,16 @@ describe "Modified SQlite3Adapter" do
   
   describe "#columns" do
     describe "type" do
-      it "should be a regular SpatialPostgreSQLColumn if column is a geometry data type" do
+      it "should be a regular SpatialSQLiteColumn if column is a geometry data type" do
         column = PointModel.columns.select{|c| c.name == 'geom'}.first
-        column.should be_a(ActiveRecord::ConnectionAdapters::SpatialPostgreSQLColumn)
+        column.should be_a(ActiveRecord::ConnectionAdapters::SpatialSQLiteColumn)
         column.geometry_type.should == :point
         column.should_not be_geographic
       end
       
-      it "should be a geographic SpatialPostgreSQLColumn if column is a geography data type" do
+      it "should be a geographic SpatialSQLiteColumn if column is a geography data type" do
         column = GeographyPointModel.columns.select{|c| c.name == 'geom'}.first
-        column.should be_a(ActiveRecord::ConnectionAdapters::SpatialPostgreSQLColumn)
+        column.should be_a(ActiveRecord::ConnectionAdapters::SpatialSQLiteColumn)
         column.geometry_type.should == :point
         column.should be_geographic
       end
