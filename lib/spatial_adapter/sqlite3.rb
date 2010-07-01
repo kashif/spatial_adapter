@@ -119,7 +119,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
       end
     end
   end
-  
+
   alias :original_add_column :add_column
   def add_column(table_name, column_name, type, options = {})
     unless geometry_data_types[type].nil?
@@ -170,6 +170,16 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
       spatial = false #TODO indtype == 'gist' && columns.size == 1 && (columns.values.first[1] == 'geometry' || columns.values.first[1] == 'geography')
       ActiveRecord::ConnectionAdapters::IndexDefinition.new(table_name, index_name, unique, column_names, spatial)
     end
+  end
+
+  alias :original_remove_index :remove_index
+  def remove_index(table_name, options = {})
+#TODO:    col = columns(table_name).detect { |col| p col.name; col.name == options }
+#    if col.is_a?(SpatialColumn)
+      execute("DROP TABLE #{index_name(table_name, options)}")
+#    else
+#      original_remove_index(table_name, options)
+#    end
   end
 
   def disable_referential_integrity(&block) #:nodoc:

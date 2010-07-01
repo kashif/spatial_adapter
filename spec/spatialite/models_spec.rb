@@ -79,9 +79,7 @@ describe "Spatially-enabled Models" do
 
   describe "finding records" do
     it 'should retrieve Point objects' do
-      p GeometryFactory.point
       model = PointModel.create(:extra => 'test', :geom => GeometryFactory.point)
-      p PointModel.find(model.id)
       PointModel.find(model.id).geom.should == GeometryFactory.point
     end
   

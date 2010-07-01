@@ -157,7 +157,7 @@ describe "Modified SQlite3Adapter" do
     end
     
     it "should create a spatial index given :spatial => true" do
-      @connection.should_receive(:execute).with(/using gist/i)
+      @connection.should_receive(:execute).with(/CreateSpatialIndex/i)
       @connection.add_index('geometry_models', 'geom', :spatial => true)
     end
     
