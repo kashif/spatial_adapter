@@ -12,140 +12,76 @@ describe "Spatially-enabled Models" do
   describe "inserting records" do
     it 'should save Point objects' do
       model = PointModel.new(:extra => 'test', :geom => GeometryFactory.point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.point.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save LineString objects' do
       model = LineStringModel.new(:extra => 'test', :geom => GeometryFactory.line_string)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.line_string.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.line_string.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save Polygon objects' do
       model = PolygonModel.new(:extra => 'test', :geom => GeometryFactory.polygon)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.polygon.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.polygon.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save MultiPoint objects' do
       model = MultiPointModel.new(:extra => 'test', :geom => GeometryFactory.multi_point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_point.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.multi_point.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save MultiLineString objects' do
       model = MultiLineStringModel.new(:extra => 'test', :geom => GeometryFactory.multi_line_string)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_line_string.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.multi_line_string.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save MultiPolygon objects' do
       model = MultiPolygonModel.new(:extra => 'test', :geom => GeometryFactory.multi_polygon)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_polygon.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.multi_polygon.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save GeometryCollection objects' do
       model = GeometryCollectionModel.new(:extra => 'test', :geom => GeometryFactory.geometry_collection)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.geometry_collection.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.geometry_collection.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save Geometry objects' do
       model = GeometryModel.new(:extra => 'test', :geom => GeometryFactory.point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.point.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save 3D Point (with Z coord) objects' do
       model = PointzModel.new(:extra => 'test', :geom => GeometryFactory.pointz)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.pointz.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.pointz.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save 3D Point (with M coord) objects' do
       model = PointmModel.new(:extra => 'test', :geom => GeometryFactory.pointm)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.pointm.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.pointm.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   
     it 'should save 4D Point objects' do
       model = Point4Model.new(:extra => 'test', :geom => GeometryFactory.point4)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point4.as_hex_ewkb))
-      model.save.should == true
-    end
-
-    it 'should save Point geography objects' do
-      model = GeographyPointModel.new(:extra => 'test', :geom => GeometryFactory.point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save LineString geography objects' do
-      model = GeographyLineStringModel.new(:extra => 'test', :geom => GeometryFactory.line_string)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.line_string.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save Polygon geography objects' do
-      model = GeographyPolygonModel.new(:extra => 'test', :geom => GeometryFactory.polygon)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.polygon.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save MultiPoint geography objects' do
-      model = GeographyMultiPointModel.new(:extra => 'test', :geom => GeometryFactory.multi_point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_point.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save MultiLineString geography objects' do
-      model = GeographyMultiLineStringModel.new(:extra => 'test', :geom => GeometryFactory.multi_line_string)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_line_string.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save MultiPolygon geography objects' do
-      model = GeographyMultiPolygonModel.new(:extra => 'test', :geom => GeometryFactory.multi_polygon)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.multi_polygon.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save GeometryCollection geography objects' do
-      model = GeographyGeometryCollectionModel.new(:extra => 'test', :geom => GeometryFactory.geometry_collection)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.geometry_collection.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save Geography objects' do
-      model = GeographyModel.new(:extra => 'test', :geom => GeometryFactory.point)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save 3D Point (with Z coord) geography objects' do
-      model = GeographyPointzModel.new(:extra => 'test', :geom => GeometryFactory.pointz)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.pointz.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save 3D Point (with M coord) geography objects' do
-      model = GeographyPointmModel.new(:extra => 'test', :geom => GeometryFactory.pointm)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.pointm.as_hex_ewkb))
-      model.save.should == true
-    end
-  
-    it 'should save 4D Point geography objects' do
-      model = GeographyPoint4Model.new(:extra => 'test', :geom => GeometryFactory.point4)
-      @connection.should_receive(:select_value).with(Regexp.new(GeometryFactory.point4.as_hex_ewkb))
+      @connection.should_receive(:insert_sql).with(Regexp.new(GeometryFactory.point4.as_hex_wkb), anything(), anything(), anything(), anything())
       model.save.should == true
     end
   end
 
   describe "finding records" do
     it 'should retrieve Point objects' do
+      p GeometryFactory.point
       model = PointModel.create(:extra => 'test', :geom => GeometryFactory.point)
+      p PointModel.find(model.id)
       PointModel.find(model.id).geom.should == GeometryFactory.point
     end
   

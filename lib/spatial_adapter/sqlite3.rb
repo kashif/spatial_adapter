@@ -51,7 +51,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
   #Redefines the quote method to add behaviour for when a Geometry is encountered
   def quote(value, column = nil)
     if value.kind_of?(GeoRuby::SimpleFeatures::Geometry)
-      "'#{value.as_hex_ewkb}'"
+      "SetSRID(ST_GeomFromWKB(X'#{value.as_hex_wkb}'), #{value.srid})"
     else
       original_quote(value,column)
     end
@@ -63,14 +63,14 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
       name, default, type, notnull = field['name'], field['dflt_value'], field['type'], field['notnull'].to_i == 0
       case type
       when /geography/i
-        ActiveRecord::ConnectionAdapters::SpatialSQLiteColumn.create_from_geography(name, default, type, notnull)
-      when /geometry/i
+        ActiveRecord::ConnectionAdapters::SpatiaLiteColumn.create_from_geography(name, default, type, notnull)
+      when /geography|geometry|point|linestring|polygon|multipoint|multilinestring|multipolygon|geometrycollection/i
         raw_geom_info = raw_geom_infos[name]
         if raw_geom_info.nil?
           # This column isn't in the geometry_columns table, so we don't know anything else about it
-          ActiveRecord::ConnectionAdapters::SpatialSQLiteColumn.create_simplified(name, default, notnull)
+          ActiveRecord::ConnectionAdapters::SpatiaLiteColumn.create_simplified(name, default, notnull)
         else
-          ActiveRecord::ConnectionAdapters::SpatialSQLiteColumn.new(name, default, raw_geom_info.type, notnull, raw_geom_info.srid, raw_geom_info.with_z, raw_geom_info.with_m)
+          ActiveRecord::ConnectionAdapters::SpatiaLiteColumn.new(name, default, raw_geom_info.type, notnull, raw_geom_info.srid, raw_geom_info.with_z, raw_geom_info.with_m)
         end
       else
         ActiveRecord::ConnectionAdapters::SQLiteColumn.new(name, default, type, notnull)
@@ -154,7 +154,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
       index_type = options
     end
     quoted_column_names = column_names.map { |e| quote_column_name(e) }.join(", ")
-    execute "CREATE #{index_type} INDEX #{quote_column_name(index_name)} ON #{quote_table_name(table_name)} #{index_method} (#{quoted_column_names})"
+    execute "SELECT CreateSpatialIndex(#{quote_table_name(table_name)}, #{quoted_column_names})"
   end
 
   # Returns the list of all indexes for a table.
@@ -301,7 +301,7 @@ end
 
 module ActiveRecord
   module ConnectionAdapters
-    class SpatialSQLiteColumn < SQLiteColumn
+    class SpatiaLiteColumn < SQLiteColumn
       include SpatialAdapter::SpatialColumn
 
       def initialize(name, default, sql_type = nil, null = true, srid=-1, with_z=false, with_m=false, geographic = false)
@@ -309,10 +309,10 @@ module ActiveRecord
         @geographic = geographic
       end
 
-      #Transforms a string to a geometry. opengis returns a HewEWKB string.
+      #Transforms a string to a geometry. Spatialite returns a BLOB.
       def self.string_to_geometry(string)
         return string unless string.is_a?(String)
-        GeoRuby::SimpleFeatures::Geometry.from_hex_ewkb(string) rescue nil
+        GeoRuby::SimpleFeatures::Geometry.from_ewkb(string) rescue nil
       end
 
       def self.create_simplified(name, default, null = true)

@@ -2,6 +2,9 @@ spatialite_connection
 
 ActiveRecord::Schema.define() do
   raw_connection.execute_batch <<-SQL
+    DELETE FROM geometry_columns;
+
+    drop table if exists idx_point_models_geom;
     drop table if exists point_models;
     create table point_models
     (
@@ -92,6 +95,8 @@ ActiveRecord::Schema.define() do
     	extra varchar(255)
     );
     select AddGeometryColumn('point4_models', 'geom', 4326, 'POINT', 4);
+
+    drop table if exists non_spatial_models;
   SQL
 
 end
