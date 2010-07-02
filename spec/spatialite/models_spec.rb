@@ -133,60 +133,6 @@ describe "Spatially-enabled Models" do
       GeographyPoint4Model.find(model.id).geom.should == GeometryFactory.point4
     end
 
-    it 'should retrieve Point geography objects' do
-      model = GeographyPointModel.create(:extra => 'test', :geom => GeometryFactory.point)
-      GeographyPointModel.find(model.id).geom.should == GeometryFactory.point
-    end
-  
-    it 'should retrieve LineString geography objects' do
-      model = GeographyLineStringModel.create(:extra => 'test', :geom => GeometryFactory.line_string)
-      GeographyLineStringModel.find(model.id).geom.should == GeometryFactory.line_string
-    end
-  
-    it 'should retrieve Polygon geography objects' do
-      model = GeographyPolygonModel.create(:extra => 'test', :geom => GeometryFactory.polygon)
-      GeographyPolygonModel.find(model.id).geom.should == GeometryFactory.polygon
-    end
-  
-    it 'should retrieve MultiPoint geography objects' do
-      model = GeographyMultiPointModel.create(:extra => 'test', :geom => GeometryFactory.multi_point)
-      GeographyMultiPointModel.find(model.id).geom.should == GeometryFactory.multi_point
-    end
-  
-    it 'should retrieve MultiLineString geography objects' do
-      model = GeographyMultiLineStringModel.create(:extra => 'test', :geom => GeometryFactory.multi_line_string)
-      GeographyMultiLineStringModel.find(model.id).geom.should == GeometryFactory.multi_line_string
-    end
-  
-    it 'should retrieve MultiPolygon geography objects' do
-      model = GeographyMultiPolygonModel.create(:extra => 'test', :geom => GeometryFactory.multi_polygon)
-      GeographyMultiPolygonModel.find(model.id).geom.should == GeometryFactory.multi_polygon
-    end
-  
-    it 'should retrieve GeometryCollection geography objects' do
-      model = GeographyGeometryCollectionModel.create(:extra => 'test', :geom => GeometryFactory.geometry_collection)
-      GeographyGeometryCollectionModel.find(model.id).geom.should == GeometryFactory.geometry_collection
-    end
-  
-    it 'should retrieve Geometry geography objects' do
-      model = GeographyModel.create(:extra => 'test', :geom => GeometryFactory.point)
-      GeographyModel.find(model.id).geom.should == GeometryFactory.point
-    end
-  
-    it 'should retrieve 3D Point (with Z coord) geography objects' do
-      model = GeographyPointzModel.create(:extra => 'test', :geom => GeometryFactory.pointz)
-      GeographyPointzModel.find(model.id).geom.should == GeometryFactory.pointz
-    end
-  
-    it 'should retrieve 3D Point (with M coord) geography objects' do
-      model = GeographyPointmModel.create(:extra => 'test', :geom => GeometryFactory.pointm)
-      GeographyPointmModel.find(model.id).geom.should == GeometryFactory.pointm
-    end
-  
-    it 'should retrieve 4D Point geography objects' do
-      model = GeographyPoint4Model.create(:extra => 'test', :geom => GeometryFactory.point4)
-      GeographyPoint4Model.find(model.id).geom.should == GeometryFactory.point4
-    end
   end
 end
 

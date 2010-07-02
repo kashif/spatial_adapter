@@ -322,7 +322,9 @@ module ActiveRecord
       #Transforms a string to a geometry. Spatialite returns a BLOB.
       def self.string_to_geometry(string)
         return string unless string.is_a?(String)
-        GeoRuby::SimpleFeatures::Geometry.from_ewkb(string) rescue nil
+        s = string.split('|')
+        wkb = "\x01#{s[1][0..-2]}"
+        GeoRuby::SimpleFeatures::Geometry.from_ewkb(wkb) rescue nil
       end
 
       def self.create_simplified(name, default, null = true)
