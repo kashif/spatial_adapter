@@ -9,6 +9,7 @@ class ActiveRecord::ConnectionAdapters::SQLite3Adapter
     @connection.enable_load_extension(1)
     #@connection.load_extension('libspatialite.so.2')
     execute("SELECT load_extension('libspatialite.so.2')")
+    @connection.enable_load_extension(0)
   end
 
 end
@@ -62,9 +63,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
     table_structure(table_name).collect do |field|
       name, default, type, notnull = field['name'], field['dflt_value'], field['type'], field['notnull'].to_i == 0
       case type
-      when /geography/i
-        ActiveRecord::ConnectionAdapters::SpatiaLiteColumn.create_from_geography(name, default, type, notnull)
-      when /geography|geometry|point|linestring|polygon|multipoint|multilinestring|multipolygon|geometrycollection/i
+      when /geometry|point|linestring|polygon|multipoint|multilinestring|multipolygon|geometrycollection/i
         raw_geom_info = raw_geom_infos[name]
         if raw_geom_info.nil?
           # This column isn't in the geometry_columns table, so we don't know anything else about it
@@ -102,7 +101,7 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
       end
     end
 
-    execute create_sql
+    raw_connection.execute_batch create_sql
   end
 
   alias :original_remove_column :remove_column
@@ -184,12 +183,12 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
 
   def disable_referential_integrity(&block) #:nodoc:
     if supports_disable_referential_integrity?() then
-      execute(tables_without_opengis.collect { |name| "ALTER TABLE #{quote_table_name(name)} DISABLE TRIGGER ALL" }.join(";"))
+      raw_connection.execute_batch(tables_without_opengis.collect { |name| "ALTER TABLE #{quote_table_name(name)} DISABLE TRIGGER ALL" }.join(";"))
     end
     yield
   ensure
     if supports_disable_referential_integrity?() then
-      execute(tables_without_opengis.collect { |name| "ALTER TABLE #{quote_table_name(name)} ENABLE TRIGGER ALL" }.join(";"))
+      raw_connection.execute_batch(tables_without_opengis.collect { |name| "ALTER TABLE #{quote_table_name(name)} ENABLE TRIGGER ALL" }.join(";"))
     end
   end
 
@@ -270,20 +269,6 @@ module ActiveRecord
         @with_z = with_z
         @with_m = with_m
         @geographic = geographic
-      end
-      
-      def sql_type
-        if geographic
-          type_sql = base.geometry_data_types[type.to_sym][:name]
-          type_sql += "Z" if with_z
-          type_sql += "M" if with_m
-          # SRID is not yet supported (defaults to 4326)
-          #type_sql += ", #{srid}" if (srid && srid != -1)
-          type_sql = "geography(#{type_sql})"
-          type_sql
-        else
-          super
-        end
       end
       
       def to_sql
