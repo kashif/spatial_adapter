@@ -12,6 +12,7 @@ describe "Spatially-enabled Migrations" do
   
   describe "creating tables" do
     after :each do
+      @connection.execute "SELECT DiscardGeometryColumn('migrated_geometry_models', 'geom')"
       @connection.drop_table "migrated_geometry_models"
     end
     
@@ -33,28 +34,8 @@ describe "Spatially-enabled Migrations" do
         geom_column.with_m.should == false
         geom_column.srid.should == -1
       end
-      
-      it "should create #{type.to_s} geographic columns" do
-        ActiveRecord::Schema.define do
-          create_table :migrated_geometry_models, :force => true do |t|
-            t.integer :extra
-            t.column :geom, type, :geographic => true
-          end
-        end
-      
-        geom_column = @connection.columns(:migrated_geometry_models).select{|c| c.name == 'geom'}.first
-        
-        geom_column.should be_a(SpatialAdapter::SpatialColumn)
-        geom_column.type.should == :string
-        geom_column.geometry_type.should == type
-        geom_column.should be_geographic
-        geom_column.with_z.should == false
-        geom_column.with_m.should == false
-        #geom_column.srid.should == 4326 # SRID is currently irrelevant for geography columns
-      end
     end
-    
-  
+
     it "should create 3d (xyz) geometry columns" do
       ActiveRecord::Schema.define do
         create_table :migrated_geometry_models, :force => true do |t|
@@ -106,58 +87,6 @@ describe "Spatially-enabled Migrations" do
       geom_column.srid.should == -1
     end
     
-    it "should create 3d (xyz) geographic columns" do
-      ActiveRecord::Schema.define do
-        create_table :migrated_geometry_models, :force => true do |t|
-          t.integer :extra
-          t.point   :geom, :with_z => true, :geographic => true
-        end
-      end
-      
-      geom_column = @connection.columns(:migrated_geometry_models).select{|c| c.name == 'geom'}.first
-      geom_column.should be_a(SpatialAdapter::SpatialColumn)
-      geom_column.should be_geographic
-      geom_column.with_z.should == true
-      geom_column.with_m.should == false
-    end
-    
-    
-    it "should create 3d (xym) geographic columns" do
-      ActiveRecord::Schema.define do
-        create_table :migrated_geometry_models, :force => true do |t|
-          t.integer :extra
-          t.point   :geom, :with_m => true, :geographic => true
-        end
-      end
-      
-      geom_column = @connection.columns(:migrated_geometry_models).select{|c| c.name == 'geom'}.first
-      geom_column.should be_a(SpatialAdapter::SpatialColumn)
-      geom_column.geometry_type.should == :point
-      geom_column.type.should == :string
-      geom_column.should be_geographic
-      geom_column.with_z.should == false
-      geom_column.with_m.should == true
-    end
-    
-    
-    it "should create 4d (xyzm) geographic columns" do
-      ActiveRecord::Schema.define do
-        create_table :migrated_geometry_models, :force => true do |t|
-          t.integer :extra
-          t.point   :geom, :with_z => true, :with_m => true, :geographic => true
-        end
-      end
-      
-      geom_column = @connection.columns(:migrated_geometry_models).select{|c| c.name == 'geom'}.first
-      geom_column.should be_a(SpatialAdapter::SpatialColumn)
-      geom_column.geometry_type.should == :point
-      geom_column.should be_geographic
-      geom_column.type.should == :string
-      geom_column.with_z.should == true
-      geom_column.with_m.should == true
-    end
-    
-    
     it "should create geometry columns with specified SRID" do
       ActiveRecord::Schema.define do
         create_table :migrated_geometry_models, :force => true do |t|
@@ -186,6 +115,7 @@ describe "Spatially-enabled Migrations" do
     end
     
     after :each do
+      @connection.execute "SELECT DiscardGeometryColumn('migrated_geometry_models', 'geom')"
       @connection.drop_table "migrated_geometry_models"
     end
   
