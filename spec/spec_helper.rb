@@ -2,7 +2,7 @@ require 'rubygems'
 require 'spec'
 require 'geo_ruby'
 #gem 'activerecord', '=2.3.5'
-gem 'activerecord', '=3.0.0.beta3'
+gem 'activerecord', '=3.0.0.rc'
 require 'active_record'
 
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
@@ -37,17 +37,19 @@ end
 def spatialite_connection
   ActiveRecord::Base.establish_connection(
     :adapter => 'sqlite3',
-    :database => 'spatial_adapter.sqlite3'
-    #:database  => ':memory:'
+    :database => 'spatial_adapter.sqlite3',
+    #:database  => ':memory:',
+    #:extension => '/usr/local/lib/libspatialite.dylib'
+    :extension => '/usr/local/lib/libspatialite.so'
   )
   
   # Load the libspatialite extension
-  ActiveRecord::Base.connection.raw_connection.enable_load_extension( 1 )
-  ActiveRecord::Base.connection.raw_connection.load_extension("/usr/local/lib/libspatialite.dylib")
-  ActiveRecord::Base.connection.raw_connection.enable_load_extension( 0 )
+  #ActiveRecord::Base.connection.raw_connection.enable_load_extension( 1 )
+  #ActiveRecord::Base.connection.raw_connection.load_extension("/usr/local/lib/libspatialite.dylib")
+  #ActiveRecord::Base.connection.raw_connection.enable_load_extension( 0 )
   
   # Initialize spatial metadata if SPATIAL_REF_SYS and GEOMETRY_COLUMNS tables do not exist
-  #if ( !ActiveRecord::Base.connection.table_exists?('SPATIAL_REF_SYS')  ||
+  #if ( !ActiveRecord::Base.connection.table_exists?('spatial_ref_sys')  &&
   #  !ActiveRecord::Base.connection.table_exists?('GEOMETRY_COLUMNS') )
   #  File.read(File.dirname(__FILE__) + "/../assets/init_spatialite-2.4.sql").split(';').each do |sql|
   #    ActiveRecord::Base.connection.execute(sql) unless sql.blank?
