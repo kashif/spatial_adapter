@@ -1,4 +1,7 @@
 ActiveRecord::SchemaDumper.ignore_tables << "spatial_ref_sys" << "geometry_columns"
+#Spatialite additions:
+ActiveRecord::SchemaDumper.ignore_tables << "geometry_columns_auth" << "views_geometry_columns" << "virts_geometry_columns"
+
 
 ActiveRecord::SchemaDumper.class_eval do
   # These are the valid options for a column specification (spatial options added)
