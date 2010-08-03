@@ -109,9 +109,9 @@ ActiveRecord::ConnectionAdapters::SQLite3Adapter.class_eval do
     column_names = column_names.flatten
     columns(table_name).each do |col|
       if column_names.include?(col.name.to_sym)
-        # Geometry columns have to be removed using DropGeometryColumn
+        # Geometry columns have to be removed using DiscardGeometryColumn
         if col.is_a?(SpatialColumn) && col.spatial? && !col.geographic?
-          execute "SELECT DropGeometryColumn('#{table_name}','#{col.name}')"
+          execute "SELECT DiscardGeometryColumn('#{table_name}','#{col.name}')"
         else
           original_remove_column(table_name, col.name)
         end
@@ -276,14 +276,20 @@ module ActiveRecord
           type_sql = base.geometry_data_types[type.to_sym][:name]
           type_sql += "M" if with_m and !with_z
           if with_m and with_z
-            dimension = 4 
-          elsif with_m or with_z
+            dimension = 4
+            dim_string = "XYZM"
+          elsif with_m and !with_z
             dimension = 3
+            dim_string = "XYM"
+          elsif with_z
+            dimension = 3
+            dim_string = "XYZ"
           else
             dimension = 2
+            dim_string = "XY"
           end
         
-          column_sql = "SELECT AddGeometryColumn('#{table_name}','#{name}',#{srid},'#{type_sql}',#{dimension})"
+          column_sql = "SELECT AddGeometryColumn('#{table_name}','#{name}',#{srid},'#{type_sql}','#{dim_string}')"
           column_sql += ";ALTER TABLE #{table_name} ALTER #{name} SET NOT NULL" if null == false
           column_sql
         else

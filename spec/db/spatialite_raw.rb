@@ -86,7 +86,7 @@ ActiveRecord::Schema.define() do
     	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	extra varchar(255)
     );
-    select AddGeometryColumn('pointm_models', 'geom', 4326, 'POINTM', 3);
+    select AddGeometryColumn('pointm_models', 'geom', 4326, 'POINT', 'XYM');
 
     drop table if exists point4_models;
     create table point4_models
@@ -94,7 +94,7 @@ ActiveRecord::Schema.define() do
     	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     	extra varchar(255)
     );
-    select AddGeometryColumn('point4_models', 'geom', 4326, 'POINT', 4);
+    select AddGeometryColumn('point4_models', 'geom', 4326, 'POINT', 'XYZM');
 
     drop table if exists non_spatial_models;
   SQL
