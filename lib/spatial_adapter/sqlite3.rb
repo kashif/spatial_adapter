@@ -7,8 +7,7 @@ class ActiveRecord::ConnectionAdapters::SQLite3Adapter
     super(connection, logger, config)
     @config = config
     @connection.enable_load_extension(1)
-    #@connection.load_extension('libspatialite.so.2')
-    execute("SELECT load_extension('libspatialite.so.2')")
+    @connection.load_extension(config[:extension])
     @connection.enable_load_extension(0)
   end
 

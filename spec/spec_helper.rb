@@ -2,7 +2,7 @@ require 'rubygems'
 require 'spec'
 require 'geo_ruby'
 #gem 'activerecord', '=2.3.5'
-gem 'activerecord', '=3.0.0.beta4'
+gem 'activerecord', '=3.0.0.rc'
 require 'active_record'
 
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
@@ -37,7 +37,8 @@ end
 def spatialite_connection
   ActiveRecord::Base.establish_connection(
     :adapter => 'sqlite3',
-    :database => 'spec/db/spatial_adapter.sqlite3'
+    :database => 'spec/db/spatial_adapter.sqlite3',
+    :extension => '/usr/local/lib/libspatialite.so'
   )
 
   # Don't output migration logging
