@@ -9,6 +9,7 @@ class ActiveRecord::ConnectionAdapters::SQLite3Adapter
     @connection.enable_load_extension(1)
     @connection.load_extension(config[:extension])
     @connection.enable_load_extension(0)
+    @connection.execute("BEGIN;")
   end
 
 end
